@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MonthCalendarFragment"
+    android:orientation="vertical"
+    android:id="@+id/month_fragment_container">
+
+    <!--달력의 요일을 표시하기 위한 레이아웃-->
+    <LinearLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:background = "#30b030"
+        android:orientation = "horizontal">
+        <!--텍스트의 형태로 일요일부터 토요일까지 날짜를 표시함-->
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "일"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "월"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "화"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "수"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "목"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "금"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp" />
+
+        <TextView
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "1"
+            android:gravity = "left"
+            android:text = "토"
+            android:textSize = "15dp"
+            android:layout_marginLeft = "20dp"/>
+
+    </LinearLayout>
+    <!--달력을 나타내기 위한 그리드뷰-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridView
+            android:id="@+id/gridview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="fill"
+            android:layout_weight="1"
+            android:background="@color/purple_500"
+            android:drawSelectorOnTop="true"
+            android:horizontalSpacing="2dp"
+            android:listSelector="@color/cyan"
+            android:numColumns="7"
+            android:textAlignment="gravity"
+            android:verticalSpacing="2dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="10dp"
+            android:id="@+id/fab"
+            android:src="@android:drawable/ic_input_add"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+    </FrameLayout>
+</LinearLayout>
+
