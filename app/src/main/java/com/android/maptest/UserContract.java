@@ -24,7 +24,7 @@ public final class UserContract {
         public static final String LAT = "lat";
         public static final String LNG = "lng";
         public static final String MEMO = "Memo";
-
+        // 데이터베이스 행에 년도, 월, 일, 스케줄제목, 시작시간, 끝시간, 위도, 경도, 메모를 설정한다.
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
                 SCHEDULE_YEAR + TEXT_TYPE + COMMA_SEP +

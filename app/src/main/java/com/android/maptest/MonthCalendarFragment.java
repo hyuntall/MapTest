@@ -89,7 +89,8 @@ public class MonthCalendarFragment extends Fragment {
         //해당 달의 최대 일 수를 구하기 위해 .getActualMaximum(Calendar.DAY_OF_MONTH) 함수를 사용한다.
         for (int i = 1; i < dayMax+1; i++){ // 최대 일 수만큼 dayList에 요소를 추가한다.
             Cursor cursor = mDbHelper.getDayUsersBySQL(String.valueOf(mParam1), String.valueOf(mParam2), String.valueOf(i));
-            if(cursor.getCount()>1){
+            // 월별 달력에서 해당 일수마다 포인터를 이동시켜 데이터가 있으면 일별 칸에 스케줄 제목을 표시한다.
+            if(cursor.getCount()>1){ //해당 일의 스케줄이 2개 이상히면 최대 2개까지만 표시한다.
                 cursor.moveToNext();
                 String sche1 = cursor.getString(cursor.getColumnIndex(UserContract.Users.SCHEDULE_TITLE));
                 cursor.moveToNext();
@@ -136,6 +137,7 @@ public class MonthCalendarFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+                // 일별 칸을 클릭했을 때, 스케줄이 한개 있으면 해당 날짜정보를 스케줄액티비티에 전송
                 if(adapt.getText1(position)!= null&&(adapt.getText2(position) == null)){
                     Cursor cursor = mDbHelper.getDayUsersBySQL(String.valueOf(mParam1), String.valueOf(mParam2), String.valueOf(adapt.getDayNum(position)));
                     cursor.moveToNext();
@@ -146,6 +148,7 @@ public class MonthCalendarFragment extends Fragment {
                     intent.putExtra("hour", Integer.parseInt(cursor.getString(cursor.getColumnIndex(UserContract.Users.START_TIME))));
                     startActivity(intent);
                 }
+                // 스케줄이 두개 이상이면 다이얼로그에 스케줄 목록을 표시하고, 클릭하면 해당 스케줄의 데이터를 스케줄 액티비티에 전송
                 else if((adapt.getText1(position) != null)&&(adapt.getText2(position) != null)) {
                     adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
 
@@ -157,12 +160,14 @@ public class MonthCalendarFragment extends Fragment {
                     builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            System.out.println(adapter.getItem(which));
+                            cursor.moveToPosition(adapter.getPosition(adapter.getItem(which)));
+                            //System.out.println(adapter.getItem(which));
+                            System.out.println(adapter.getPosition(adapter.getItem(which)));
                             Intent intent = new Intent(getActivity(), schedule.class);
                             intent.putExtra("year", mParam1);
                             intent.putExtra("month", mParam2);
                             intent.putExtra("day", Integer.parseInt((String) adapt.getDayNum(position)));
-                            //intent.putExtra("hour", Integer.parseInt(cursor.getString(cursor.getColumnIndex(UserContract.Users.START_TIME))));
+                            intent.putExtra("hour", Integer.parseInt(cursor.getString(cursor.getColumnIndex(UserContract.Users.START_TIME))));
                             startActivity(intent);
                         }
                     });
@@ -180,7 +185,7 @@ public class MonthCalendarFragment extends Fragment {
             }
         });
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() { // 일별칸에 스케줄이 없을때 클릭하고 플로팅버튼을 누르면 스케줄 액티비티로 이동
             @Override
             public void onClick(View view) {
                 Toast.makeText(getActivity(), "플로팅버튼클릭함ㅋ", Toast.LENGTH_SHORT).show();

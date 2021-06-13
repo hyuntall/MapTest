@@ -167,7 +167,7 @@ public class WeekCalendarFragment extends Fragment {
         ListView list = rootView.findViewById(R.id.listView);
         list.setAdapter(adapt2);
         for(int i=0; i<24; i++){
-            for(int j=0; j<7; j++) {
+            for(int j=0; j<7; j++) { //해당 요일의 시간칸별로 SQL포인터를 이동시켜서 스케줄이 있으면 칸에 표시한다.
                 Cursor cursor = mDbHelper.getHourUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(dayList.get(j)), String.valueOf(i));
                 if (cursor.moveToNext()){
                     voidcell.add(cursor.getString(cursor.getColumnIndex(UserContract.Users.SCHEDULE_TITLE)));
@@ -196,7 +196,7 @@ public class WeekCalendarFragment extends Fragment {
         gridview2.setAdapter(adapt3);
         gridview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
+                                    int position, long id) { //해당 칸에 스케줄이 있으면 해당 스케줄 데이터를 스케줄액티비티에 전송한다.
                 if(cellnum > 0)
                     Toast.makeText(getActivity(),"position="+position,Toast.LENGTH_SHORT).show();
                 hour = position/7;
@@ -216,7 +216,7 @@ public class WeekCalendarFragment extends Fragment {
         });
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {// 해당칸에 스케줄이 없을때, 클릭하고 플로틍 버튼을 클릭하면 액티비티 실행
             @Override
             public void onClick(View view) {
                 if(go1 && go2) {

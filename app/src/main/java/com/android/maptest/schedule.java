@@ -56,9 +56,9 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map); // 구글맵 프래그먼트 생성
         mapFragment.getMapAsync(schedule.this);
-        Intent intent = getIntent();
+        Intent intent = getIntent(); // 이전 프래그먼트로부터 데이터를 받아온다
         EditText title = findViewById(R.id.title);
         year = intent.getIntExtra("year", 0);
         month = intent.getIntExtra("month", 0);
@@ -69,9 +69,8 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
         System.out.println(day);
         scheduleDate = String.valueOf(year)+String.valueOf(month)+String.valueOf(day);
         title.setText(year+"년 "+month+"월 "+day+"일 " +hour+"시");
-        mDbHelper = new DBHelper(this);
+        mDbHelper = new DBHelper(this); //데이터베이스 생성
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        //getLastLocation();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             setting();
         }
@@ -81,72 +80,35 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
             public void onClick(View view) {
                 getAddress();
             }
-        });
+        }); //검색 버튼 클릭 시 주소를 찾아 지도에 표시하는 getAddress()함수 호출
         Button save = (Button)findViewById(R.id.save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 insertRecord();
             }
-        });
+        });//저장 버튼 클릭 시 현재 액티비티에 적힌 데이터를 SQL에 저장한다.
         Button remove = (Button)findViewById(R.id.remove);
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteRecord();
             }
-        });
+        });//삭제 버튼 클릭 시 현재 SQL에 저장된 데이터를 삭제한다.
         Button cancel = (Button)findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
-        });
-    }
-
-    final int REQUEST_PERMISSIONS_FOR_LAST_KNOWN_LOCATION = 0;
-    Location mLastLocation;
-    private void getLastLocation() {
-        // 1. 위치 접근에 필요한 권한 검사 및 요청
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    schedule.this,            // MainActivity 액티비티의 객체 인스턴스를 나타냄
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},        // 요청할 권한 목록을 설정한 String 배열
-                    REQUEST_PERMISSIONS_FOR_LAST_KNOWN_LOCATION    // 사용자 정의 int 상수. 권한 요청 결과를 받을 때
-            );
-            return;
-        }
-
-        // 2. Task<Location> 객체 반환
-        Task task = mFusedLocationClient.getLastLocation();
-
-        // 3. Task가 성공적으로 완료 후 호출되는 OnSuccessListener 등록
-        task.addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // 4. 마지막으로 알려진 위치(location 객체)를 얻음.
-                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.map);
-                mapFragment.getMapAsync(schedule.this);
-                if (location != null) {
-                    mLastLocation = location;
-                    //updateUI();
-                } else
-                    Toast.makeText(getApplicationContext(),
-                            "No location detected",
-                            Toast.LENGTH_SHORT)
-                            .show();
-            }
-        });
+        });// 취소 버튼 클릭 시 액티비티를 종료한다.
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) { //이전 프래그먼트에서 받아온 데이터에 해당하는 데이터베이스에 저장된 주소로 구글맵을 이동한다.
         Cursor cursor  =mDbHelper.getDayUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(day));
         mGoogleMap = googleMap;
-        location = new LatLng(37.5817891, 127.008175);
+        location = new LatLng(37.5817891, 127.008175); // 데이터가 없을 시 기본 주소는 한성대학교로 표시한다.
         while(cursor.moveToNext()){
             lat = Double.parseDouble(cursor.getString(cursor.getColumnIndex(UserContract.Users.LAT)));
             lng = Double.parseDouble(cursor.getString(cursor.getColumnIndex(UserContract.Users.LNG)));
@@ -157,7 +119,7 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
     }
 
-    private void getAddress() {
+    private void getAddress() { // 주소를 검색하는 함수
         EditText editText = (EditText)findViewById(R.id.input);
         String address = editText.getText().toString();
 
@@ -176,7 +138,7 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
         }
 
     }
-    private void insertRecord() {
+    private void insertRecord() { // 저장 버튼을 누르면 해당 액티비티에 적힌 데이터를 SQL에 저장한다.
         EditText title = findViewById(R.id.title);
         TimePicker startPicker = findViewById(R.id.startpicker);
         TimePicker endPicker = findViewById(R.id.endpicker);
@@ -195,7 +157,7 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
 
     }
 
-    private void deleteRecord() {
+    private void deleteRecord() { // 삭제 버튼을 누르면 해당 데이터에 적힌 데이터를 SQL에서 삭제한다
         Cursor cursor = mDbHelper.getDayUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(day));
         if(hour > 0) {
             cursor = mDbHelper.getHourUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(day), String.valueOf(hour));
@@ -209,19 +171,23 @@ public class schedule extends AppCompatActivity implements OnMapReadyCallback {
         finish();
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setting(){
+    private void setting(){ // 액티비티가 호출되었을 때 이전 프래그먼트에서 전달받은 데이터를 토대로 데이터를 화면에 표시한다.
         EditText title = findViewById(R.id.title);
         TimePicker startPicker = findViewById(R.id.startpicker);
         TimePicker endPicker = findViewById(R.id.endpicker);
         EditText memo = findViewById(R.id.memo);
-        Cursor cursor  = mDbHelper.getDayUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(day));
+        Cursor cursor  = mDbHelper.getDayUsersBySQL(String.valueOf(year), String.valueOf(month),
+                String.valueOf(day)); // 처음에 커서의 포인터를 해당 년도, 월, 일에 해당하는 부분으로 지정한다.
         if(hour>0)
-            cursor  = mDbHelper.getHourUsersBySQL(String.valueOf(year), String.valueOf(month), String.valueOf(day), String.valueOf(hour));
-        startPicker.setHour(hour);
-        endPicker.setHour(hour+1);
-        while (cursor.moveToNext()){
+            cursor  = mDbHelper.getHourUsersBySQL(String.valueOf(year), String.valueOf(month),
+                    String.valueOf(day), String.valueOf(hour)); // 만약 시간에 대한 정보가 있을 경우 시간까지 포함하여 포인터를 이동시킨다.
+        startPicker.setHour(hour); //데이터를 기반으로 시작시간을 표시한다
+        endPicker.setHour(hour+1); // 시작시간에서 한시간 후를 끝나는 시간으로 기본 설정한다.
+        //while (cursor.moveToNext()){
+        if(cursor.moveToNext()) { //해당 날짜 데이터에 해당하는 스케줄의 제목과 메모를 가져와 작성한다.
             title.setText(cursor.getString(cursor.getColumnIndex(UserContract.Users.SCHEDULE_TITLE)));
             memo.setText(cursor.getString(cursor.getColumnIndex(UserContract.Users.MEMO)));
         }
+        //}
     }
 }

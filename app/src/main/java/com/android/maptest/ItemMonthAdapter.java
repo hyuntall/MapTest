@@ -78,12 +78,12 @@ public class ItemMonthAdapter extends BaseAdapter {
         // 어댑터가 관리하는 항목 데이터 중에서 position 위치의 항목의 문자열을 설정 텍스트뷰 객체에 설정
         text1.setText(mItems.get(position).nText1);
         if(mItems.get(position).nText1 != null)
-            text1.setBackgroundColor(Color.GREEN);
+            text1.setBackgroundColor(Color.GREEN); // 월별 달력에서 표시되는 첫번째 스케줄칸의 배경을 초록색으로 설정
         TextView text2 = (TextView) convertView.findViewById(R.id.stext2);
         // 어댑터가 관리하는 항목 데이터 중에서 position 위치의 항목의 문자열을 설정 텍스트뷰 객체에 설정
         text2.setText(mItems.get(position).nText2);
-        if(mItems.get(position).nText2 != null)
-            text2.setBackgroundColor(Color.CYAN);
+        if(mItems.get(position).nText2 != null) //
+            text2.setBackgroundColor(Color.CYAN); // 월별 달력에서 표시되는 두번째 스케줄칸의 배경을 시안색으로 설정
 
         View view = (View) convertView.findViewById(R.id.month_item);
 

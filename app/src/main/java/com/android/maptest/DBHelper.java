@@ -28,87 +28,20 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(UserContract.Users.DELETE_TABLE);
         onCreate(db);
     }
-
-    public void insertUserBySQL(String date, String title, String startTime, String endTime, String location, String memo) {
-        try {
-            String sql = String.format (
-                    "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s) VALUES (NULL, '%s', '%s', '%s', '%s', '%s', '%s')",
-                    UserContract.Users.TABLE_NAME,
-                    UserContract.Users._ID,
-                    UserContract.Users.SCHEDULE_YEAR,
-                    UserContract.Users.SCHEDULE_MONTH,
-                    UserContract.Users.SCHEDULE_DAY,
-                    UserContract.Users.SCHEDULE_TITLE,
-                    UserContract.Users.START_TIME,
-                    UserContract.Users.END_TIME,
-                    UserContract.Users.LAT,
-                    UserContract.Users.LNG,
-                    UserContract.Users.MEMO,
-                    date,
-                    title,
-                    startTime,
-                    endTime,
-                    location,
-                    memo);
-
-            getWritableDatabase().execSQL(sql);
-        } catch (SQLException e) {
-            Log.e(TAG,"Error in inserting recodes");
-        }
-    }
-
-    public Cursor getAllUsersBySQL(String scheduleYear) {
-        String sql = "Select * FROM " + UserContract.Users.TABLE_NAME +" WHERE year= '" + scheduleYear+"'";
-        //"SELECT * FROM ORDER_T WHERE NAME='ppotta'" ;
-        return getReadableDatabase().rawQuery(sql,null);
-    }
-
-    public Cursor getMonthUsersBySQL(String scheduleYear, String scheduleMonth) {
-        String sql = "Select * FROM " + UserContract.Users.TABLE_NAME +" WHERE year= '" + scheduleYear+"' AND Month= '" + scheduleMonth+"'";
-        //"SELECT * FROM ORDER_T WHERE NAME='ppotta'" ;
-        return getReadableDatabase().rawQuery(sql,null);
-    }
-
+    // 시간정보 없이 데이터베이스를 호출할 때 사용하는 함수
     public Cursor getDayUsersBySQL(String scheduleYear, String scheduleMonth, String scheduleDay) {
         String sql = "Select * FROM " + UserContract.Users.TABLE_NAME +" WHERE year= '" + scheduleYear+"' AND Month= '" + scheduleMonth+"' AND Day= '" + scheduleDay+"'";
         //"SELECT * FROM ORDER_T WHERE NAME='ppotta'" ;
         return getReadableDatabase().rawQuery(sql,null);
     }
+    // 시간정보를 포함하여 데이터베이스를 호출할 때 사용하는 함수
     public Cursor getHourUsersBySQL(String scheduleYear, String scheduleMonth, String scheduleDay, String scheduleHour) {
         String sql = "Select * FROM " + UserContract.Users.TABLE_NAME +" WHERE year= '"
                 + scheduleYear+"' AND Month= '" + scheduleMonth+"' AND Day= '" + scheduleDay+"' AND StartTime= '" + scheduleHour+"'";
         //"SELECT * FROM ORDER_T WHERE NAME='ppotta'" ;
         return getReadableDatabase().rawQuery(sql,null);
     }
-
-
-    public void deleteUserBySQL(String _id) {
-        try {
-            String sql = String.format (
-                    "DELETE FROM %s WHERE %s = %s",
-                    UserContract.Users.TABLE_NAME,
-                    UserContract.Users._ID,
-                    _id);
-            getWritableDatabase().execSQL(sql);
-        } catch (SQLException e) {
-            Log.e(TAG,"Error in deleting recodes");
-        }
-    }
-
-    public void updateUserBySQL(String _id, String name, String phone) {
-        try {
-            String sql = String.format (
-                    "UPDATE  %s SET %s = '%s', %s = '%s' WHERE %s = %s",
-                    UserContract.Users.TABLE_NAME,
-                    UserContract.Users.SCHEDULE_TITLE, name,
-                    UserContract.Users.SCHEDULE_YEAR, phone,
-                    UserContract.Users._ID, _id) ;
-            getWritableDatabase().execSQL(sql);
-        } catch (SQLException e) {
-            Log.e(TAG,"Error in updating recodes");
-        }
-    }
-
+    // 스케줄 액티비티에 적힌 내용을 데이터베이스에 저장하는 함수
     public long insertUserByMethod(String year, String month, String day, String title, String startTime, String endTime, String lat, String lng, String memo) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -124,31 +57,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return db.insert(UserContract.Users.TABLE_NAME,null,values);
     }
-
-    public Cursor getAllUsersByMethod(String scheduleDate) {
-        SQLiteDatabase db = getReadableDatabase();
-        return db.query(UserContract.Users.TABLE_NAME,null,UserContract.Users.SCHEDULE_YEAR,null,null,null,null);
-    }
-
+    //스케줄 액티비티에 적힌 내용과 일치하는 데이터를 삭제하는 함수
     public long deleteUserByMethod(String _id) {
         SQLiteDatabase db = getWritableDatabase();
 
         String whereClause = UserContract.Users._ID +" = ?";
         String[] whereArgs ={_id};
         return db.delete(UserContract.Users.TABLE_NAME, whereClause, whereArgs);
-    }
-
-    public long updateUserByMethod(String _id, String name, String phone) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(UserContract.Users.SCHEDULE_TITLE, name);
-        values.put(UserContract.Users.SCHEDULE_YEAR,phone);
-
-        String whereClause = UserContract.Users._ID +" = ?";
-        String[] whereArgs ={_id};
-
-        return db.update(UserContract.Users.TABLE_NAME, values, whereClause, whereArgs);
     }
 
 }
